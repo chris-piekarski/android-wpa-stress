@@ -42,7 +42,9 @@ public class MainActivity extends Activity {
 
     
     private TextView mWifiState;
+    private TextView mWifiScan;
     private TextView mCMState;
+    private TextView mWifiConfig;
     private AlarmManager alarmMgr;
     private WifiManager mWifiManager;
     private static final String WIFI_ACTION = "com.cpiekarski.wifiobserver.WIFI_ACTION";
@@ -50,21 +52,27 @@ public class MainActivity extends Activity {
     BroadcastReceiver mBr = new BroadcastReceiver(){
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e(TAG, "Received Alarm Intent");
+            Log.e(TAG, "Received Alarm Intent: "+mWifiManager.pingSupplicant());
 
             //get the last scan
+            String scanList = "";
             List<ScanResult> sList = mWifiManager.getScanResults();
             Log.i(TAG, "----- Scan List -----");
             for(ScanResult sr : sList ) {
                 Log.i(TAG, sr.toString());
+                scanList += sr.toString();
             }
+            mWifiScan.setText(scanList);
             Log.i(TAG, "------------------------");
 
+            String configList = "";
             List<WifiConfiguration> wList= mWifiManager.getConfiguredNetworks();
             Log.i(TAG, "----- Configured List -----");
             for(WifiConfiguration wc : wList ) {
                 Log.i(TAG, "SSID: "+wc.SSID);
+                configList += wc.SSID;
             }
+            mWifiConfig.setText(configList);
             Log.i(TAG, "------------------------");
             // request a new scan
             mWifiManager.startScan(); //doesn't wait
@@ -115,6 +123,8 @@ public class MainActivity extends Activity {
         
         mWifiState = (TextView) findViewById(R.id.wifi_state);
         mCMState = (TextView) findViewById(R.id.cm_state);
+        mWifiScan = (TextView) findViewById(R.id.wifi_scan);
+        mWifiConfig = (TextView) findViewById(R.id.wifi_config);
         
         testDate();
 

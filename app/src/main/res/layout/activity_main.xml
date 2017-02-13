@@ -33,4 +33,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
+    <TextView
+        android:layout_marginTop="50dp"
+        android:id="@+id/wifi_config_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WifiManager Config"/>
+
+    <TextView
+        android:id="@+id/wifi_config"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:layout_marginTop="50dp"
+        android:id="@+id/wifi_scan_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="WifiManager Scan"/>
+
+    <TextView
+        android:id="@+id/wifi_scan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
 </LinearLayout>
