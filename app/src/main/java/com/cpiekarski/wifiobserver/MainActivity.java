@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -24,7 +26,10 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+
+import static java.sql.Types.NULL;
 
 /**
  * Android test app for monitoring Wifi state events using both the WifiManager
@@ -39,14 +44,44 @@ public class MainActivity extends Activity {
     private TextView mWifiState;
     private TextView mCMState;
     private AlarmManager alarmMgr;
+    private WifiManager mWifiManager;
     private static final String WIFI_ACTION = "com.cpiekarski.wifiobserver.WIFI_ACTION";
 
     BroadcastReceiver mBr = new BroadcastReceiver(){
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.e(TAG, "Received Alarm Intent");
+
+            //get the last scan
+            List<ScanResult> sList = mWifiManager.getScanResults();
+            Log.i(TAG, "----- Scan List -----");
+            for(ScanResult sr : sList ) {
+                Log.i(TAG, sr.toString());
+            }
+            Log.i(TAG, "------------------------");
+
+            List<WifiConfiguration> wList= mWifiManager.getConfiguredNetworks();
+            Log.i(TAG, "----- Configured List -----");
+            for(WifiConfiguration wc : wList ) {
+                Log.i(TAG, "SSID: "+wc.SSID);
+            }
+            Log.i(TAG, "------------------------");
+            // request a new scan
+            mWifiManager.startScan(); //doesn't wait
         }
     };
+
+    private void dumpWifiInfo() {
+        Log.v(TAG, "----- WifiManager Info -----");
+        Log.v(TAG,"is5GHzBandSupported: "+mWifiManager.is5GHzBandSupported());
+        Log.v(TAG,"isWifiEnabled: "+mWifiManager.isWifiEnabled());
+        Log.v(TAG,"isTdlsSupported: "+mWifiManager.isTdlsSupported());
+        Log.v(TAG,"isScanAlwaysAvailable: "+mWifiManager.isScanAlwaysAvailable());
+        Log.v(TAG, "isP2pSupported:"+mWifiManager.isP2pSupported());
+        Log.v(TAG,"isEnhancedPowerReportingSupported: "+mWifiManager.isEnhancedPowerReportingSupported());
+        Log.v(TAG,"isDeviceToApRttSupported: "+mWifiManager.isDeviceToApRttSupported());
+        Log.v(TAG,"-----------------------------");
+    }
     
     private void testDate() {
         Date d = new Date();
@@ -83,7 +118,10 @@ public class MainActivity extends Activity {
         
         testDate();
 
+        mWifiManager = (WifiManager)this.getSystemService(Context.WIFI_SERVICE);
+        dumpWifiInfo();
 
+        // Set up alarm interval
         IntentFilter intentFilter = new IntentFilter(WIFI_ACTION);
         this.registerReceiver(mBr, intentFilter);
 
